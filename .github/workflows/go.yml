@@ -1,0 +1,43 @@
+name: Deploy Go Application
+
+on:
+  push:
+    branches:
+      - main  # Faz o deploy toda vez que houver um push na branch 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checa o código-fonte do repositório
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
+    # 2. Instala o Go no runner
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'  # Altere para a versão Go que você usa
+
+    # 3. Constrói o binário da aplicação Go
+    - name: Build the Go application
+      run: |
+        go mod tidy
+        go build -o goapp main.go
+
+    # 4. Configura SSH no GitHub Actions
+    - name: Setup SSH for deployment
+      uses: webfactory/ssh-agent@v0.10.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    # 5. Faz deploy no servidor remoto via SCP
+    - name: Copy files via SCP
+      run: |
+        scp -o StrictHostKeyChecking=no goapp novo_usuario@leonardocds15.sytes.net:/home/novo_usuario
+
+    # 6. Reinicia a aplicação no servidor remoto (opcional)
+    - name: Restart application on remote server
+      run: |
+        ssh novo_usuario@leonardocds15.sytes.net 'sudo systemctl restart goapp.service'
