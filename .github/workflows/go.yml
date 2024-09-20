@@ -23,7 +23,7 @@ jobs:
     # 3. Constrói o binário da aplicação Go
     - name: Build the Go application
       run: |
-        go build -o goapp main.go
+        go build -o goapp_new main.go
 
     # 4. Configura SSH no GitHub Actions
     - name: Setup SSH for deployment
@@ -34,9 +34,12 @@ jobs:
     # 5. Faz deploy no servidor remoto via SCP
     - name: Copy files via SCP
       run: |
-        scp -o StrictHostKeyChecking=no goapp novo_usuario@leonardocds15.sytes.net:/home/novo_usuario
+        scp -o StrictHostKeyChecking=no goapp_new novo_usuario@leonardocds15.sytes.net:/home/novo_usuario
+        ssh novo_usuario@leonardocds15.sytes.net 'sudo mv /home/novo_usuario/goapp /home/novo_usuario/goapp_old'
+         ssh novo_usuario@leonardocds15.sytes.net 'sudo mv /home/novo_usuario/goapp_new /home/novo_usuario/goapp'
+        
 
     # 6. Reinicia a aplicação no servidor remoto (opcional)
     - name: Restart application on remote server
       run: |
-        ssh novo_usuario@leonardocds15.sytes.net 'sudo supervisorctl restart goapp'
+        ssh novo_usuario@leonardocds15.sytes.net 'sudo supervisorctl update goapp'
