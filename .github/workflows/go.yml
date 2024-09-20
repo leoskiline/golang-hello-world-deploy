@@ -42,4 +42,4 @@ jobs:
     # 6. Reinicia a aplicação no servidor remoto (opcional)
     - name: Restart application on remote server
       run: |
-        ssh novo_usuario@leonardocds15.sytes.net 'sudo supervisorctl update goapp'
+        ssh novo_usuario@leonardocds15.sytes.net 'sudo supervisorctl restart goapp'
