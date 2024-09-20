@@ -23,7 +23,6 @@ jobs:
     # 3. Constrói o binário da aplicação Go
     - name: Build the Go application
       run: |
-        go mod tidy
         go build -o goapp main.go
 
     # 4. Configura SSH no GitHub Actions
